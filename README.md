@@ -57,6 +57,38 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Users API
+
+The application reads `DATABASE_URL` from `.env` and connects to PostgreSQL through TypeORM. Database schema changes are managed with migrations; keep `DB_SYNCHRONIZE=false`.
+
+Run pending migrations with:
+
+```bash
+npm run migration:run
+```
+
+The migration creates `UsersTable` and `Post` and adds the foreign key from `Post.userId` to `UsersTable.id`. `LoginUsers` is retained because it is already managed by the existing database migration history.
+
+Start the API with:
+
+```bash
+npm run start:dev
+```
+
+Create a user with `POST /users`:
+
+```json
+{
+  "name": "Ada Lovelace",
+  "sex": "female",
+  "fatherName": "Lord Byron",
+  "motherName": "Anne Isabella Milbanke",
+  "nextOfKin": "Charles Babbage"
+}
+```
+
+Retrieve all users with `GET /users`.
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
