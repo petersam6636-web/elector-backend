@@ -20,7 +20,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @POST('login')
+  @Post('login')
   findOne(@Body() body: LoginDto ) {
     return this.usersService.findOne(body);
   }
@@ -67,7 +67,7 @@ export class UsersController {
     return this.usersService.addKey(key)
   }
 
-  @POST('history')
+  @Post('history')
   history(@Body() body: HistoryDto){
     return this.usersService.addHistory({
       header: body.header,
