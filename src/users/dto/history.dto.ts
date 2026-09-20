@@ -1,12 +1,14 @@
 import { IsString, IsNumber } from 'class-validator';
 
-export class KeyDto {
+export class HistoryDto {
   @IsString()
-  userKey: string;
+  header: string;
+
+  @IsString()
+  content: string;
 
   @IsNumber()
   userId: number;
 
-  @IsNumber()
-  expireDate: number;
+
 }

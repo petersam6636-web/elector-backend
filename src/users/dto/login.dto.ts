@@ -4,7 +4,5 @@ export class LoginDto {
   email: string;
 
   @IsString()
-  @Min(5)
-  @Max(30)
   password: string;
 }

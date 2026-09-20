@@ -1,5 +1,5 @@
 import {PrimaryGeneratedColumn,
-   Column, CreateDateColumn, Entity, ManyToOne,OneToOne,
+  Column, CreateDateColumn, Entity, OneToOne,ManyToOne,
    JoinColumn} from 'typeorm';
 import type { Nominees } from './nominee.entity.js';
 import type { Users } from './user.entity.js';
@@ -16,8 +16,8 @@ export class Likes {
   comment: string;
 
   @OneToOne('Users', (user: Users) => user.like)
-    @JoinColumn({name: 'userId'})
-  user: Users
+  @JoinColumn({name: 'userId'})
+  user: Users;
 
   @ManyToOne('Nominees', (nominee: Nominees) => nominee.likes)
   @JoinColumn({name: 'nomineeId'})

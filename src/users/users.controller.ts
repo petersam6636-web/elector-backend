@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe} from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, ParseIntPipe} from '@nestjs/common';
 import { UsersService } from './users.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import {LoginDto} from './dto/login.dto.js';
 import { nomineeDto } from './dto/nominee.dto.js';
 import { LikesDto } from './dto/like.dto.js';
 import { KeyDto } from './dto/key.dto.js';
+import { HistoryDto } from './dto/history.dto.js';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -35,6 +36,11 @@ export class UsersController {
       })
   }
 
+  @Get('nominees/:id')
+  findAllNominee(@Param('id', ParseIntPipe) id: number){
+    return this.usersService.findAllNominee(id)
+  }
+
 
   @Get('nominee/:id')
   findNominee(@Param('id', ParseIntPipe) id: number) {
@@ -59,5 +65,23 @@ export class UsersController {
   @Post('register/key')
   addKey(@Body() key: KeyDto){
     return this.usersService.addKey(key)
+  }
+
+  @Get('history')
+  history(@Body() body: HistoryDto){
+    return this.usersService.addHistory({
+      header: body.header,
+      content: body.content,
+      userId: Number(body.userId)
+    })
+  }
+
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number){
+    return this.usersService.clear(id)
+  }
+  @Delete('history/:id')
+  remove(@Param('id', ParseIntPipe) id: number){
+    return this.usersService.remove(id)
   }
 }

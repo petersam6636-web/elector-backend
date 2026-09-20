@@ -14,6 +14,7 @@
   import { nomineeDto } from './dto/nominee.dto.js';
 import { LikesDto } from './dto/like.dto.js';
 import { KeyDto } from './dto/key.dto.js';
+import { HistoryDto } from './dto/history.dto.js';
 
   @Injectable()
 export class UsersService {
@@ -30,6 +31,9 @@ export class UsersService {
 
     @InjectRepository(Keys)
     private readonly keysRepo: Repository<Keys>,
+
+    @InjectRepository(History)
+    private readonly historyRepo: Repository<History>,
 
   ){}
 
@@ -61,7 +65,12 @@ export class UsersService {
     relations: {
       key: true,
       history: true,
-      nominees: true
+      nominees: {
+        user: true,
+        likes: {
+          user: true
+        }
+      }
     }
   });
 
@@ -82,7 +91,9 @@ export class UsersService {
       lastName: body.lastName,
       user: {
         id: body.userId
-      }
+      },
+      description: body.description,
+      menufestus: body.menufesto,
     });
 
     await this.nomineeRepo.save(user);
@@ -110,6 +121,18 @@ export class UsersService {
   }
 
   async addLike(body: LikesDto){
+
+
+    const alreadyVoted = await this.usersRepo.findOne({
+      where: {
+        id: body.userId
+      },
+      relations: {
+        like: true
+      }
+    });
+    if (!alreadyVoted) throw new NotFoundException('User not found');
+    if (alreadyVoted.like) throw new UnauthorizedException('You have already voted');
 
     const exist = await this.nomineeRepo.findOneBy({id: body.nomineeId});
 
@@ -146,6 +169,9 @@ export class UsersService {
     where: {
       id: body.userId,
     },
+    relations: {
+      key: true
+    }
   });
    
 
@@ -164,6 +190,57 @@ export class UsersService {
 
     return this.keysRepo.save(key);
   }
+
+  async findAllNominee(id: number){
+   const contestants = await this.nomineeRepo.find({
+    where: {
+      user: {
+        id: id
+      }
+    },
+    relations: {
+      likes: true
+    }
+   });
+
+   contestants.sort((a, b) => b.likes.length - a.likes.length);
+   return contestants
+  }
+
+ async addHistory(body: HistoryDto){
+    const history = this.historyRepo.create({
+      header: body.header,
+      content: body.content,
+      user: {
+        id: body.userId
+      }
+    });
+
+   await this.historyRepo.save(history);
+   await this.nomineeRepo.delete({user: {id: body.userId}});
+   await this.likesRepo.delete({user: {id: body.userId}});
+   await this.keysRepo.delete({user: {id: body.userId}});
+
+
+
+    return this.historyRepo.find()
+  }
+
+
+clear(id: number){
+ return this.historyRepo.delete({
+  user: {
+    id: id
+  }
+ })
+}
+
+remove(id: number){
+ return this.historyRepo.delete({
+  id: id
+ })
+}
+
 
 
 }

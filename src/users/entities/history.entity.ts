@@ -8,11 +8,11 @@ export class History {
   id: number;
 
   @Column()
-  header: number;
+  header: string;
   
 
   @Column()
-  content: number;
+  content: string;
 
   @ManyToOne('Users', (user: Users) => user.history)
   @JoinColumn({name: 'userId'})
