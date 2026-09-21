@@ -192,6 +192,7 @@ export class UsersService {
   }
 
   async findAllNominee(id: number){
+    
    const contestants = await this.nomineeRepo.find({
     where: {
       user: {

@@ -64,7 +64,11 @@ export class UsersController {
 
   @Post('register/key')
   addKey(@Body() key: KeyDto){
-    return this.usersService.addKey(key)
+    return this.usersService.addKey({
+      userKey: key.userKey,
+      userId: key.userId,
+      expireDate: Number(key.expireDate)
+    })
   }
 
   @Post('history')
